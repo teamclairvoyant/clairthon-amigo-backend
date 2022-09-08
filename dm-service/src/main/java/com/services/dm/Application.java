@@ -1,4 +1,4 @@
-package com.services.dmt;
+package com.services.dm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

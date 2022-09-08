@@ -1,4 +1,4 @@
-package com.services.dmt.endpoints;
+package com.services.dm.endpoints;
 
 import org.springframework.web.bind.annotation.RestController;
 

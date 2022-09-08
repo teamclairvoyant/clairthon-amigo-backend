@@ -8,10 +8,10 @@
 		<version>2.4.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.services.dmt</groupId>
-	<artifactId>dmt-service</artifactId>
+	<groupId>com.services.dm</groupId>
+	<artifactId>dm-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dmt-service</name>
+	<name>dm-service</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
