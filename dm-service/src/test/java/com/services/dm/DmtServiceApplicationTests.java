@@ -1,10 +1,10 @@
-package com.services.dmt;
+package com.services.dm;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DmtServiceApplicationTests {
+class DmServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

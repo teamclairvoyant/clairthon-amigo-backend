@@ -1,4 +1,4 @@
-package com.services.dmt.repositories;
+package com.services.dm.repositories;
 
 import org.springframework.stereotype.Service;
 
