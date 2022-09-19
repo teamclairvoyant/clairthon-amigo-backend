@@ -9,7 +9,7 @@ import org.springframework.core.io.ByteArrayResource;
 @NoArgsConstructor
 @Builder(access = AccessLevel.PUBLIC)
 public class FileDownloadDTO {
-    ByteArrayResource resource;
-    String name;
-    String mimeType;
+    private ByteArrayResource resource;
+    private String name;
+    private String mimeType;
 }

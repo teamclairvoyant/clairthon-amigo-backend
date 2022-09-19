@@ -1,5 +1,7 @@
 package com.services.dm.endpoints;
 
+import com.services.dm.constants.Constant;
+import com.services.dm.dto.DocumentDTO;
 import com.services.dm.dto.FileDownloadDTO;
 import com.services.dm.dto.FileUploadRequestDTO;
 import com.services.dm.dto.ResourceResponseDTO;
@@ -13,33 +15,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping(DocumentController.BASE_URI)
 public class DocumentController {
 
-    @Autowired
-    DocumentService documentService;
+    static final String BASE_URI = "/api/";
+
+    private final DocumentService documentService;
+
+    public DocumentController(final DocumentService documentService) {
+        this.documentService = documentService;
+    }
 
     @PostMapping(
-            path = "/upload",
+            path = Constant.UPLOAD_URI,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResourceResponseDTO> uploadFile(
-            @RequestPart(required = true) String type,
+            @RequestPart String type,
             @RequestPart(required = false) String description,
-            @RequestPart(required = true) MultipartFile file)
+            @RequestPart MultipartFile file)
             throws Exception {
         try {
             FileUploadRequestDTO uploadDTO = FileUploadRequestDTO
-                        .builder()
-                        .type(type)
-                        .description(description)
-                        .inputStream(file.getInputStream())
-                        .fileName(file.getOriginalFilename())
-                        .fileSize(file.getSize())
-                        .build();
+                    .builder()
+                    .type(type)
+                    .description(description)
+                    .inputStream(file.getInputStream())
+                    .fileName(file.getOriginalFilename())
+                    .fileSize(file.getSize())
+                    .build();
 
             ResourceResponseDTO resource = documentService.uploadFile(uploadDTO);
             return ResponseEntity.ok().body(resource);
@@ -49,24 +54,24 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/download/{id}")
+    @GetMapping(Constant.DOWNLOAD_FILE_URI)
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String id,
                                                           @RequestParam String fileName) throws Exception {
         try {
 
             ResponseEntity responseEntity;
-            FileDownloadDTO fileDownloadDTO = documentService.downloadFile(id,fileName);
-                responseEntity = ResponseEntity.ok()
-                        .contentLength(fileDownloadDTO.getResource().contentLength())
-                        .contentType(
-                                MediaType.parseMediaType(
-                                        fileDownloadDTO.getMimeType() != null
-                                                ? fileDownloadDTO.getMimeType()
-                                                : MediaType.APPLICATION_OCTET_STREAM.toString()))
-                        .header(
-                                HttpHeaders.CONTENT_DISPOSITION,
-                                "attachment; filename=\"" + fileDownloadDTO.getName() + "\"")
-                        .body(fileDownloadDTO.getResource());
+            FileDownloadDTO fileDownloadDTO = documentService.downloadFile(id, fileName);
+            responseEntity = ResponseEntity.ok()
+                    .contentLength(fileDownloadDTO.getResource().contentLength())
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    fileDownloadDTO.getMimeType() != null
+                                            ? fileDownloadDTO.getMimeType()
+                                            : MediaType.APPLICATION_OCTET_STREAM.toString()))
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + fileDownloadDTO.getName() + "\"")
+                    .body(fileDownloadDTO.getResource());
 
 
             return responseEntity;
@@ -77,4 +82,9 @@ public class DocumentController {
         }
     }
 
+    @PostMapping(Constant.DOCUMENT_URI)
+    public DocumentDTO addDocument(@RequestBody DocumentDTO documentDTO) {
+        documentService.addDocument(documentDTO);
+        return documentDTO;
+    }
 }

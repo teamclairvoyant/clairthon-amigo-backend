@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<swagger.version>2.9.2</swagger.version>
+		<dynamodb-enhanced.version>2.16.15</dynamodb-enhanced.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -55,6 +56,11 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb-enhanced</artifactId>
+			<version>${dynamodb-enhanced.version}</version>
 		</dependency>
 	</dependencies>
 
