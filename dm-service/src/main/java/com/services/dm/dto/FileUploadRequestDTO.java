@@ -10,11 +10,11 @@ import java.io.InputStream;
 @NoArgsConstructor
 @Builder(access = AccessLevel.PUBLIC)
 public class FileUploadRequestDTO {
-    String type;
-    String description;
-    InputStream inputStream;
-    String fileName;
-    byte[] bytes;
-    Long fileSize;
-    String fileType;
+    private String type;
+    private String description;
+    private InputStream inputStream;
+    private String fileName;
+    private byte[] bytes;
+    private Long fileSize;
+    private String fileType;
 }

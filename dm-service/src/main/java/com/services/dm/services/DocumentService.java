@@ -1,35 +1,36 @@
 package com.services.dm.services;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.services.dm.constants.Constant;
+import com.services.dm.dto.DocumentDTO;
 import com.services.dm.dto.FileDownloadDTO;
 import com.services.dm.dto.FileUploadRequestDTO;
 import com.services.dm.dto.ResourceResponseDTO;
+import com.services.dm.repositories.DocumentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
 
 @Slf4j
 @Service
 public class DocumentService {
 
-    AmazonS3 s3Client;
+    private final AmazonS3 s3Client;
 
-    public DocumentService(AmazonS3 s3Client) {
+    private final DocumentRepository documentRepository;
+
+    public DocumentService(final AmazonS3 s3Client, final DocumentRepository documentRepository) {
         this.s3Client = s3Client;
+        this.documentRepository = documentRepository;
     }
 
 
@@ -73,5 +74,9 @@ public class DocumentService {
                 .name(fileName)
                 .resource(new ByteArrayResource(s3Object.getObjectContent().readAllBytes()))
                 .build();
+    }
+
+    public void addDocument(DocumentDTO documentDTO) {
+        documentRepository.addDocument(documentDTO);
     }
 }
