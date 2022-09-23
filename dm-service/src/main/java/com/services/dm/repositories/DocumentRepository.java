@@ -3,7 +3,6 @@ package com.services.dm.repositories;
 import com.services.dm.constants.Constant;
 import com.services.dm.constants.DBConstants;
 import com.services.dm.dto.DocumentDTO;
-import com.services.dm.properties.DBProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
@@ -11,6 +10,9 @@ import software.amazon.awssdk.enhanced.dynamodb.model.ConditionCheck;
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -61,5 +63,24 @@ public class DocumentRepository {
                     "Adding document failed with error: {}",
                     e.getMessage());
         }
+    }
+
+    public List<DocumentDTO> getDocuments() {
+
+        log.debug("In getDocuments method::");
+
+        try {
+            return table.scan().items().stream()
+                    .collect(Collectors.toList());
+        } catch (TransactionCanceledException e) {
+            log.error(
+                    "Getting document failed with error {}",
+                    e.getMessage());
+        } catch (Exception e) {
+            log.error(
+                    "Getting document failed with error: {}",
+                    e.getMessage());
+        }
+        return Collections.emptyList();
     }
 }

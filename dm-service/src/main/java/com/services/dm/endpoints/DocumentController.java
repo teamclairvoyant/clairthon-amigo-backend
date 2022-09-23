@@ -6,8 +6,9 @@ import com.services.dm.dto.FileDownloadDTO;
 import com.services.dm.dto.FileUploadRequestDTO;
 import com.services.dm.dto.ResourceResponseDTO;
 import com.services.dm.services.DocumentService;
+import com.services.dm.util.DocumentUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.simple.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,8 +25,11 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    public DocumentController(final DocumentService documentService) {
+    private final DocumentUtil documentUtil;
+
+    public DocumentController(final DocumentService documentService, final DocumentUtil documentUtil) {
         this.documentService = documentService;
+        this.documentUtil = documentUtil;
     }
 
     @PostMapping(
@@ -86,5 +90,10 @@ public class DocumentController {
     public DocumentDTO addDocument(@RequestBody DocumentDTO documentDTO) {
         documentService.addDocument(documentDTO);
         return documentDTO;
+    }
+
+    @GetMapping(Constant.DOCUMENT_URI)
+    public JSONObject getDocuments() {
+        return documentUtil.convertDocumentDTOtoJSONObject(documentService.getDocuments());
     }
 }

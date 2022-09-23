@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -78,5 +79,9 @@ public class DocumentService {
 
     public void addDocument(DocumentDTO documentDTO) {
         documentRepository.addDocument(documentDTO);
+    }
+
+    public List<DocumentDTO> getDocuments() {
+        return documentRepository.getDocuments();
     }
 }
