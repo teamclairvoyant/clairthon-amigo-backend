@@ -38,7 +38,7 @@ public class DocumentService {
     public ResourceResponseDTO uploadFile(FileUploadRequestDTO uploadDTO) throws Exception {
 
         try {
-            String fileKey = UUID.randomUUID().toString()
+            String fileKey = uploadDTO.getUserId()
                     + Constant.PATH_SEPARATOR
                     + uploadDTO.getFileName();
 
@@ -68,8 +68,8 @@ public class DocumentService {
         }
     }
 
-    public FileDownloadDTO downloadFile(String id,String fileName) throws IOException {
-        S3Object s3Object = s3Client.getObject(Constant.S3_BUCKET_NAME,id.concat("/"+fileName));
+    public FileDownloadDTO downloadFile(String userId,String fileName) throws IOException {
+        S3Object s3Object = s3Client.getObject(Constant.S3_BUCKET_NAME,userId.concat("/"+fileName));
         return FileDownloadDTO.builder()
                 .mimeType(s3Object.getObjectMetadata().getContentType())
                 .name(fileName)
