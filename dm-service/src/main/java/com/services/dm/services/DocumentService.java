@@ -10,6 +10,7 @@ import com.services.dm.dto.*;
 import com.services.dm.repositories.DocumentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.json.simple.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
@@ -84,5 +85,9 @@ public class DocumentService {
     public void submitRequiredDocumentList(StatusDTO statusDTO) {
         log.info("Document List {} for userId {} ", statusDTO.getDocuments(), statusDTO.getCandidateId());
         documentRepository.submitRequiredDocumentList(statusDTO);
+    }
+
+    public JSONObject getRequiredDocumentListForUser(String candidateId) {
+        return documentRepository.getRequiredDocumentListForUser(candidateId).getDocuments();
     }
 }
