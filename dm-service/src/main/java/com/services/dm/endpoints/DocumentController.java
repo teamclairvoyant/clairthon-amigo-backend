@@ -99,4 +99,9 @@ public class DocumentController {
         documentService.submitRequiredDocumentList(statusDTO);
         return Constant.DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY;
     }
+
+    @GetMapping(Constant.REQUIRED_DOCUMENTS)
+    public JSONObject getRequiredDocumentListForUser(@PathVariable String candidateId) {
+        return documentService.getRequiredDocumentListForUser(candidateId);
+    }
 }

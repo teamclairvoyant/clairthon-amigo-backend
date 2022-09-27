@@ -5,13 +5,11 @@ import com.services.dm.constants.DBConstants;
 import com.services.dm.dto.DocumentDTO;
 import com.services.dm.dto.StatusDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.ConditionCheck;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
 import javax.annotation.PostConstruct;
@@ -135,5 +133,32 @@ public class DocumentRepository {
         List<StatusDTO> collect = statusTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
 
         return collect.get(0);
+    }
+
+    public StatusDTO getRequiredDocumentListForUser(String candidateId) {
+
+        log.debug("In getRequiredDocumentListForUser method::");
+
+        try {
+            Key key = Key.builder().partitionValue(candidateId)
+                    .build();
+
+
+            QueryEnhancedRequest queryEnhancedRequest = QueryEnhancedRequest.builder()
+                    .queryConditional(QueryConditional.keyEqualTo(key)).build();
+            List<StatusDTO> statusDTOS = statusTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
+            if (statusDTOS.size() == 1) {
+                return statusDTOS.get(0);
+            }
+        } catch (TransactionCanceledException e) {
+            log.error(
+                    "Getting required document failed with error {}",
+                    e.getMessage());
+        } catch (Exception e) {
+            log.error(
+                    "Getting required document failed with error: {}",
+                    e.getMessage());
+        }
+        return new StatusDTO();
     }
 }

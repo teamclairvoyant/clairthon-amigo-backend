@@ -20,6 +20,8 @@ public class Constant {
 
     public static final String SUBMIT = "submit";
 
+    public static final String REQUIRED_DOCUMENTS = "requiredDocuments/{candidateId}";
+
     public static final String DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY = "Document List Submitted successfully";
 
 }
