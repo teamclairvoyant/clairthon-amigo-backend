@@ -17,4 +17,5 @@ public class FileUploadRequestDTO {
     private byte[] bytes;
     private Long fileSize;
     private String fileType;
+    private String userId;
 }

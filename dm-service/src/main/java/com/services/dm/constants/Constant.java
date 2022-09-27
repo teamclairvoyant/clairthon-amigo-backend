@@ -8,7 +8,7 @@ public class Constant {
 
     public static final String UPLOAD_URI = "upload";
 
-    public static final String DOWNLOAD_FILE_URI = "download/{id}";
+    public static final String DOWNLOAD_FILE_URI = "download/{userId}";
 
     public static final String DOCUMENT_URI = "document";
 
