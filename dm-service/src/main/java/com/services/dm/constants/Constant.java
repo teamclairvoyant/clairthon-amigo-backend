@@ -16,4 +16,10 @@ public class Constant {
 
     public static final String DOCUMENT_TABLE = "ddb-dm-document";
 
+    public static final String STATUS_TABLE = "ddb-dm-document-status";
+
+    public static final String SUBMIT = "submit";
+
+    public static final String DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY = "Document List Submitted successfully";
+
 }

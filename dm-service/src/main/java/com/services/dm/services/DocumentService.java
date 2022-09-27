@@ -6,10 +6,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.services.dm.constants.Constant;
-import com.services.dm.dto.DocumentDTO;
-import com.services.dm.dto.FileDownloadDTO;
-import com.services.dm.dto.FileUploadRequestDTO;
-import com.services.dm.dto.ResourceResponseDTO;
+import com.services.dm.dto.*;
 import com.services.dm.repositories.DocumentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -83,5 +79,10 @@ public class DocumentService {
 
     public List<DocumentDTO> getDocuments() {
         return documentRepository.getDocuments();
+    }
+
+    public void submitRequiredDocumentList(StatusDTO statusDTO) {
+        log.info("Document List {} for userId {} ", statusDTO.getDocuments(), statusDTO.getCandidateId());
+        documentRepository.submitRequiredDocumentList(statusDTO);
     }
 }

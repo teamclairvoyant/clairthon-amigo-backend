@@ -3,10 +3,15 @@ package com.services.dm.repositories;
 import com.services.dm.constants.Constant;
 import com.services.dm.constants.DBConstants;
 import com.services.dm.dto.DocumentDTO;
+import com.services.dm.dto.StatusDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.ConditionCheck;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +25,8 @@ public class DocumentRepository {
 
     private DynamoDbTable<DocumentDTO> table;
 
+    private DynamoDbTable<StatusDTO> statusTable;
+
     private final DynamoDbEnhancedClient client;
 
     public DocumentRepository(DynamoDbEnhancedClient client) {
@@ -32,6 +39,8 @@ public class DocumentRepository {
                 Constant.DOCUMENT_TABLE);
         table = client.table(Constant.DOCUMENT_TABLE,
                 TableSchema.fromBean(DocumentDTO.class));
+        statusTable = client.table(Constant.STATUS_TABLE,
+                TableSchema.fromBean(StatusDTO.class));
     }
 
     public void addDocument(DocumentDTO documentDTO) {
@@ -82,5 +91,49 @@ public class DocumentRepository {
                     e.getMessage());
         }
         return Collections.emptyList();
+    }
+
+    public void submitRequiredDocumentList(StatusDTO statusDTO) {
+
+        log.debug("In submitRequiredDocumentList method::");
+
+        try {
+            client.transactWriteItems(enhancedRequest -> {
+                Expression expression = Expression.builder()
+                        .expression("attribute_not_exists(" + DBConstants.COL_ID + ")").build();
+                Key key = Key.builder().partitionValue(statusDTO.getCandidateId())
+                        .build();
+                enhancedRequest.addConditionCheck(table,
+                        ConditionCheck.builder().key(key).conditionExpression(expression).build());
+            });
+
+            client.transactWriteItems(
+                    enhancedRequest -> enhancedRequest.addPutItem(statusTable, statusDTO));
+
+            log.debug(
+                    "Submitting required list of document Added Successfully::");
+
+        } catch (TransactionCanceledException e) {
+            log.error(
+                    "Submitting required list of document failed with error {}",
+                    e.getMessage());
+        } catch (Exception e) {
+            log.error(
+                    "Submitting required list of document failed with error: {}",
+                    e.getMessage());
+        }
+    }
+
+    public StatusDTO fetchStatusOfSubmittedDocuments(
+            String userId) {
+        Key key = Key.builder().partitionValue(userId)
+                .build();
+
+
+        QueryEnhancedRequest queryEnhancedRequest = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key)).build();
+        List<StatusDTO> collect = statusTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
+
+        return collect.get(0);
     }
 }
