@@ -1,10 +1,7 @@
 package com.services.dm.endpoints;
 
 import com.services.dm.constants.Constant;
-import com.services.dm.dto.DocumentDTO;
-import com.services.dm.dto.FileDownloadDTO;
-import com.services.dm.dto.FileUploadRequestDTO;
-import com.services.dm.dto.ResourceResponseDTO;
+import com.services.dm.dto.*;
 import com.services.dm.services.DocumentService;
 import com.services.dm.util.DocumentUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -95,5 +92,11 @@ public class DocumentController {
     @GetMapping(Constant.DOCUMENT_URI)
     public JSONObject getDocuments() {
         return documentUtil.convertDocumentDTOtoJSONObject(documentService.getDocuments());
+    }
+
+    @PostMapping(Constant.SUBMIT)
+    public String submitRequiredDocumentList(@RequestBody StatusDTO statusDTO) {
+        documentService.submitRequiredDocumentList(statusDTO);
+        return Constant.DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY;
     }
 }
