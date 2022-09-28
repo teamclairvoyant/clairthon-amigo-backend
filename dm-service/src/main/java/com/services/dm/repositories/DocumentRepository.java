@@ -5,6 +5,7 @@ import com.services.dm.constants.DBConstants;
 import com.services.dm.dto.DocumentDTO;
 import com.services.dm.dto.StatusDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.ConditionCheck;
@@ -122,17 +123,27 @@ public class DocumentRepository {
         }
     }
 
-    public StatusDTO fetchStatusOfSubmittedDocuments(
-            String userId) {
-        Key key = Key.builder().partitionValue(userId)
+    public void updateStatusOfSubmittedDocuments(
+            String candidateId, String documentId) {
+        Key key = Key.builder().partitionValue(candidateId)
                 .build();
 
 
         QueryEnhancedRequest queryEnhancedRequest = QueryEnhancedRequest.builder()
                 .queryConditional(QueryConditional.keyEqualTo(key)).build();
-        List<StatusDTO> collect = statusTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
+        List<StatusDTO> statusDTOS = statusTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
 
-        return collect.get(0);
+        if (statusDTOS.size() == 1) {
+
+            StatusDTO statusDTO = statusDTOS.get(0);
+            JSONObject documents = statusDTO.getDocuments();
+            documents.put(documentId, "true");
+            statusDTO.setDocuments(documents);
+
+            client.transactWriteItems(
+                    enhancedRequest -> enhancedRequest.addUpdateItem(statusTable, statusDTO));
+        }
+
     }
 
     public StatusDTO getRequiredDocumentListForUser(String candidateId) {
