@@ -77,10 +77,12 @@ public class DocumentService {
                 break;
             }
         }
+        String fileKeyArr[] = fileKey.split("/");
+        String fileName = fileKeyArr[fileKeyArr.length-1];
         S3Object  s3Object = s3Client.getObject(Constant.S3_BUCKET_NAME,fileKey);
         return FileDownloadDTO.builder()
                 .mimeType(s3Object.getObjectMetadata().getContentType())
-                .name(String.valueOf(System.currentTimeMillis()))
+                .name(fileName)
                 .resource(new ByteArrayResource(s3Object.getObjectContent().readAllBytes()))
                 .build();
     }
