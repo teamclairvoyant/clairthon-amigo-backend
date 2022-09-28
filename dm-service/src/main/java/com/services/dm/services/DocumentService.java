@@ -51,6 +51,8 @@ public class DocumentService {
                     new PutObjectRequest(Constant.S3_BUCKET_NAME, fileKey, byteArrayInputStream, s3ObjMetadata);
             s3Client.putObject(putObjectRequest);
 
+            documentRepository.updateStatusOfSubmittedDocuments(uploadDTO.getUserId(), uploadDTO.getDescription());
+
             return ResourceResponseDTO.builder()
                     .description(uploadDTO.getDescription())
                     .fileName(uploadDTO.getFileName())
