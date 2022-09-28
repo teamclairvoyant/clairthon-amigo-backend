@@ -1,9 +1,7 @@
 package com.services.dm.services;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.services.dm.constants.Constant;
 import com.services.dm.dto.*;
@@ -37,6 +35,8 @@ public class DocumentService {
         try {
             String fileKey = uploadDTO.getUserId()
                     + Constant.PATH_SEPARATOR
+                    + uploadDTO.getDescription()
+                    + Constant.PATH_SEPARATOR
                     + uploadDTO.getFileName();
 
             byte[] bytes = IOUtils.toByteArray(uploadDTO.getInputStream());
@@ -65,11 +65,20 @@ public class DocumentService {
         }
     }
 
-    public FileDownloadDTO downloadFile(String userId,String fileName) throws IOException {
-        S3Object s3Object = s3Client.getObject(Constant.S3_BUCKET_NAME,userId.concat("/"+fileName));
+    public FileDownloadDTO downloadFile(String userId,String description) throws IOException {
+        String fileKey= "";
+        ListObjectsV2Result result = s3Client.listObjectsV2(Constant.S3_BUCKET_NAME);
+        List<S3ObjectSummary> objects = result.getObjectSummaries();
+        for (S3ObjectSummary os : objects) {
+            if(os.getKey().contains(description)) {
+                fileKey = os.getKey();
+                break;
+            }
+        }
+        S3Object  s3Object = s3Client.getObject(Constant.S3_BUCKET_NAME,fileKey);
         return FileDownloadDTO.builder()
                 .mimeType(s3Object.getObjectMetadata().getContentType())
-                .name(fileName)
+                .name(String.valueOf(System.currentTimeMillis()))
                 .resource(new ByteArrayResource(s3Object.getObjectContent().readAllBytes()))
                 .build();
     }

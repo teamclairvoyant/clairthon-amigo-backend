@@ -33,7 +33,7 @@ public class DocumentController {
             path = Constant.UPLOAD_URI,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResourceResponseDTO> uploadFile(
-            @RequestPart(required = false) String description,
+            @RequestPart String description,
             @RequestPart String userId,
             @RequestPart MultipartFile file)
             throws Exception {
@@ -57,11 +57,11 @@ public class DocumentController {
 
     @GetMapping(Constant.DOWNLOAD_FILE_URI)
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String userId,
-                                                          @RequestParam String fileName) throws Exception {
+                                                          @RequestParam String description) throws Exception {
         try {
 
             ResponseEntity responseEntity;
-            FileDownloadDTO fileDownloadDTO = documentService.downloadFile(userId, fileName);
+            FileDownloadDTO fileDownloadDTO = documentService.downloadFile(userId, description);
             responseEntity = ResponseEntity.ok()
                     .contentLength(fileDownloadDTO.getResource().contentLength())
                     .contentType(
