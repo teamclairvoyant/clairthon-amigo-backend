@@ -104,4 +104,10 @@ public class DocumentController {
     public JSONObject getRequiredDocumentListForUser(@PathVariable String candidateId) {
         return documentService.getRequiredDocumentListForUser(candidateId);
     }
+
+    @PutMapping(Constant.UPDATE_STATUS)
+    public String updateCandidatesDocumentStatus(@PathVariable String candidateId, @PathVariable String candidateStatus) {
+        documentService.updateCandidatesDocumentStatus(candidateId, candidateStatus);
+        return Constant.STATUS_UPDATED_SUCCESSFULLY;
+    }
 }

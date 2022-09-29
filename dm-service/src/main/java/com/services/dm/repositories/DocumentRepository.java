@@ -2,6 +2,7 @@ package com.services.dm.repositories;
 
 import com.services.dm.constants.Constant;
 import com.services.dm.constants.DBConstants;
+import com.services.dm.dto.CandidateDTO;
 import com.services.dm.dto.DocumentDTO;
 import com.services.dm.dto.StatusDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class DocumentRepository {
 
     private DynamoDbTable<StatusDTO> statusTable;
 
+    private DynamoDbTable<CandidateDTO> candidateTable;
+
     private final DynamoDbEnhancedClient client;
 
     public DocumentRepository(DynamoDbEnhancedClient client) {
@@ -40,6 +43,8 @@ public class DocumentRepository {
                 TableSchema.fromBean(DocumentDTO.class));
         statusTable = client.table(Constant.STATUS_TABLE,
                 TableSchema.fromBean(StatusDTO.class));
+        candidateTable = client.table(Constant.CANDIDATE_TABLE,
+                TableSchema.fromBean(CandidateDTO.class));
     }
 
     public void addDocument(DocumentDTO documentDTO) {
@@ -171,5 +176,24 @@ public class DocumentRepository {
                     e.getMessage());
         }
         return new StatusDTO();
+    }
+
+    public void updateCandidatesDocumentStatus(String candidateId, String candidateStatus) {
+        Key key = Key.builder().partitionValue(candidateId)
+                .build();
+
+
+        QueryEnhancedRequest queryEnhancedRequest = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key)).build();
+        List<CandidateDTO> candidateDTOS = candidateTable.query(queryEnhancedRequest).items().stream().collect(Collectors.toList());
+
+        if (candidateDTOS.size() == 1) {
+
+            CandidateDTO candidateDTO = candidateDTOS.get(0);
+            candidateDTO.setCandidateStatus(candidateStatus);
+
+            client.transactWriteItems(
+                    enhancedRequest -> enhancedRequest.addUpdateItem(candidateTable, candidateDTO));
+        }
     }
 }

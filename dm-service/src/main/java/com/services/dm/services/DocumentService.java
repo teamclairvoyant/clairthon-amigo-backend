@@ -103,4 +103,8 @@ public class DocumentService {
     public JSONObject getRequiredDocumentListForUser(String candidateId) {
         return documentRepository.getRequiredDocumentListForUser(candidateId).getDocuments();
     }
+
+    public void updateCandidatesDocumentStatus(String candidateId, String candidateStatus) {
+        documentRepository.updateCandidatesDocumentStatus(candidateId, candidateStatus);
+    }
 }
