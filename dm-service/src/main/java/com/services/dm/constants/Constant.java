@@ -36,4 +36,13 @@ public class Constant {
 
     public static final String STATUS_UPDATED_SUCCESSFULLY = "Status Updated successfully";
 
+    public static final String PATH_API_REQUESTS = "/api";
+
+    public static final String AUTH_TOKEN_ABSENT = "Auth token is not provided";;
+
+    public static final String AUTHORIZATION = "Authorization";
+
+    public static final String INVALID_TOKEN = "Auth token is invalid or expired";
+
+    public static final CharSequence ISSUER = "https://cognito-idp.ap-south-1.amazonaws.com";
 }
