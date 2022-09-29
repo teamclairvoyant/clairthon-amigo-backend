@@ -26,7 +26,7 @@ public class Constant {
 
     public static final String UPDATE_STATUS = "updateStatus/{candidateId}/{candidateStatus}";
 
-    public static final String GET_CANDIDATE = "candidate/{recruiterId}";
+    public static final String GET_CANDIDATE = "recruiter/{recruiterId}";
 
     public static final String DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY = "Document List Submitted successfully";
 
