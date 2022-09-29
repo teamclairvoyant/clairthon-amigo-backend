@@ -1,5 +1,6 @@
 package com.services.dm.services;
 
+import com.amazonaws.services.dynamodbv2.xspec.B;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
@@ -12,9 +13,17 @@ import org.json.simple.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Service
@@ -85,6 +94,55 @@ public class DocumentService {
                 .name(fileName)
                 .resource(new ByteArrayResource(s3Object.getObjectContent().readAllBytes()))
                 .build();
+    }
+
+    public FileDownloadDTO downloadAll(String userId)
+            throws IOException {
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(bos);
+
+        try {
+            ZipEntry zipentry = null;
+            Set<String> objectKeys= new HashSet<>();
+            ListObjectsV2Result result = s3Client.listObjectsV2(Constant.S3_BUCKET_NAME);
+            List<S3ObjectSummary> objects = result.getObjectSummaries();
+            for (S3ObjectSummary os : objects) {
+                if(os.getKey().contains(userId)) {
+                    objectKeys.add(os.getKey());
+                }
+            }
+            for (String objectKey : objectKeys) {
+                String name = objectKey.substring(objectKey.lastIndexOf("/"), objectKey.length());
+                zipentry = new ZipEntry(objectKey);
+                zos.putNextEntry(zipentry);
+                InputStream in = downloadFileAsStream(Constant.S3_BUCKET_NAME, objectKey,s3Client);
+                zos.write(in.readAllBytes());
+                in.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            zos.flush();
+            zos.closeEntry();
+            zos.close();
+            bos.close();
+        }
+        return FileDownloadDTO.builder()
+                .mimeType(Constant.APPLICATION_ZIP)
+                .name(Constant.ZIP_FILE)
+                .resource(new ByteArrayResource(bos.toByteArray()))
+                .build();
+    }
+
+    public static InputStream downloadFileAsStream(String bucketName, String objectKey,AmazonS3 s3Client) {
+        try {
+            GetObjectRequest s3ObjectReq = new GetObjectRequest(bucketName, objectKey);
+            return s3Client.getObject(s3ObjectReq).getObjectContent();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return null;
     }
 
     public void addDocument(DocumentDTO documentDTO) {

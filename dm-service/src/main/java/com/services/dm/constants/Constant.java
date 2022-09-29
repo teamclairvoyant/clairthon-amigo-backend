@@ -28,6 +28,12 @@ public class Constant {
 
     public static final String DOCUMENT_LIST_SUBMITTED_SUCCESSFULLY = "Document List Submitted successfully";
 
+    public static final String DOWNLOAD_ALL_FILES_URI = "downloadAll/{userId}";
+
+    public static final String APPLICATION_ZIP = "application/zip";
+
+    public static final String ZIP_FILE = "files.zip";
+
     public static final String STATUS_UPDATED_SUCCESSFULLY = "Status Updated successfully";
 
 }
