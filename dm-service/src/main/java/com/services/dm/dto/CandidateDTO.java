@@ -27,4 +27,6 @@ public class CandidateDTO {
     private String candidatePhoneNumber;
 
     private String candidateStatus;
+
+    private String recruiterId;
 }

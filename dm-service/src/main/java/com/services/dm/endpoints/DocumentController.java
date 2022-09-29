@@ -6,15 +6,9 @@ import com.services.dm.services.DocumentService;
 import com.services.dm.util.DocumentUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -58,5 +52,10 @@ public class DocumentController {
     public String updateCandidatesDocumentStatus(@PathVariable String candidateId, @PathVariable String candidateStatus) {
         documentService.updateCandidatesDocumentStatus(candidateId, candidateStatus);
         return Constant.STATUS_UPDATED_SUCCESSFULLY;
+    }
+
+    @GetMapping(Constant.GET_CANDIDATE)
+    public List<CandidateDTO> getCandidatesUnderRecruiter(@PathVariable String recruiterId) {
+        return documentService.getCandidatesUnderRecruiter(recruiterId);
     }
 }

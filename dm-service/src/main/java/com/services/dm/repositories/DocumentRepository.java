@@ -196,4 +196,12 @@ public class DocumentRepository {
                     enhancedRequest -> enhancedRequest.addUpdateItem(candidateTable, candidateDTO));
         }
     }
+
+    public List<CandidateDTO> getCandidatesUnderRecruiter(String recruiterId) {
+
+        return candidateTable.scan().items().stream().filter(statusDTO ->
+                recruiterId.equals(statusDTO.getRecruiterId())
+        ).collect(Collectors.toList());
+    }
+
 }

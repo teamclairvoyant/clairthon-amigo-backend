@@ -1,6 +1,5 @@
 package com.services.dm.services;
 
-import com.amazonaws.services.dynamodbv2.xspec.B;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
@@ -13,12 +12,10 @@ import org.json.simple.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -164,5 +161,9 @@ public class DocumentService {
 
     public void updateCandidatesDocumentStatus(String candidateId, String candidateStatus) {
         documentRepository.updateCandidatesDocumentStatus(candidateId, candidateStatus);
+    }
+
+    public List<CandidateDTO> getCandidatesUnderRecruiter(String recruiterId) {
+        return documentRepository.getCandidatesUnderRecruiter(recruiterId);
     }
 }
