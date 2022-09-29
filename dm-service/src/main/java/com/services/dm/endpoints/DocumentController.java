@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController
 @RequestMapping(DocumentController.BASE_URI)
@@ -77,6 +80,27 @@ public class DocumentController {
 
             return responseEntity;
 
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @GetMapping(Constant.DOWNLOAD_ALL_FILES_URI)
+    public ResponseEntity<ByteArrayResource> downloadAll(@PathVariable String userId) throws Exception {
+        try {
+            FileDownloadDTO fileDownloadDTO = documentService.downloadAll(userId);
+            return ResponseEntity.ok()
+                    .contentLength(fileDownloadDTO.getResource().contentLength())
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    fileDownloadDTO.getMimeType() != null
+                                            ? fileDownloadDTO.getMimeType()
+                                            : MediaType.APPLICATION_OCTET_STREAM.toString()))
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + fileDownloadDTO.getName() + "\"")
+                    .body(fileDownloadDTO.getResource());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;
