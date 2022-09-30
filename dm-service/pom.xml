@@ -98,7 +98,6 @@
 						<exclude>com/services/dm/properties/**/*</exclude>
 						<exclude>com/services/dm/utils/**/*</exclude>
 						<exclude>com/services/dm/repositories/**/*</exclude>
-						<exclude>com/services/dm/services/**/*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
