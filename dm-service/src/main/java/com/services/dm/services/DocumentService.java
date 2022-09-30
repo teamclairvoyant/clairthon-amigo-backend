@@ -78,7 +78,7 @@ public class DocumentService {
         ListObjectsV2Result result = s3Client.listObjectsV2(Constant.S3_BUCKET_NAME);
         List<S3ObjectSummary> objects = result.getObjectSummaries();
         for (S3ObjectSummary os : objects) {
-            if(os.getKey().contains(description)) {
+            if(os.getKey().contains(userId.concat("/" + description + "/"))) {
                 fileKey = os.getKey();
                 break;
             }
